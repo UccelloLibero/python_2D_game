@@ -1,3 +1,11 @@
+"""Dungeon Game
+Explore a dungeon to find a hidden door and escape. But be careful!
+The grue is hiding somewhere inside!
+
+Created: 2019
+Author: Maya Husic
+"""
+
 import os
 import random
 
@@ -23,7 +31,31 @@ CELLS = [
 # Each item in the grid is a tuple of the coordinates for where the player is and the entire thing is a list.
 
 def clear_screen():
+    """Clear the screen"""
     os.system('cls' if os.name == 'nt' else 'clear')
+
+
+def get_locations(cells):
+    """Randomly pick starting locations for the monster, the door,
+    and the player
+
+    >>> cells = build_cells(2, 2)
+    >>> m, d, p = get_locations(cells)
+    >>> m != d and d != p
+    True
+    >>> d in cells
+    True
+
+    """
+    monster = random.choice(cells)
+    door = random.choice(cells)
+    player = random.choice(cells)
+
+    if monster == door or monster == player or door == player:
+        monster, door, player = get_locations(cells)
+
+    return monster, door, player
+
 
 def random_locations():
     return random.sample(CELLS, 3)
@@ -31,6 +63,13 @@ def random_locations():
     # above is a tuple, so maybe use packing/unpacking for this one
 
 def move_player(player, move):
+    """Based on the tuple of player's current location, move player
+    to a chosen location and update it's nee location
+
+    >>> move_player({'location': (1, 1), 'path': []}, 'LEFT')
+    (0, 1)
+
+    """
     x, y = player
     if move == 'LEFT':
         x -= 1
@@ -49,6 +88,14 @@ def move_player(player, move):
 
 
 def get_moves(player):
+ """Based on the tuple of player's location, return the list of
+    acceptable moves
+
+    >>> GAME_DIMENSIONS = (2, 2)
+    >>> get_moves((0, 2))
+    ['RIGHT', 'UP', 'DOWN']
+
+    """
     moves = ["LEFT", "RIGHT", "UP", "DOWN"]
     x, y = player
     if x == 0:
